@@ -21,7 +21,9 @@ class ExpertiseGenerator
   def self.generate(personal_website)
     page               = RestClient.get(personal_website)
     parsed_page        = Nokogiri::HTML.parse(page)
-    _expertise_headers = parsed_page.css(EXPERTISE_CSS_CRITERIA).map(&:text)
+    expertise_headers = parsed_page.css(EXPERTISE_CSS_CRITERIA).map(&:text)
+    raise personal_website_missing_headers_error if expertise_headers.empty?
+    expertise_headers
   rescue RestClient::Exception
     raise @@invalid_personal_website_error
   end
