@@ -4,7 +4,7 @@ RSpec.describe 'Users', type: :request do
 
   describe 'POST' do
     let(:name)             { 'Tarn Adams' }
-    let(:personal_website) { 'www.google.com' }
+    let(:personal_website) { 'https://www.google.com' }
     let(:required_params)  do
       {
         name: name,
@@ -20,6 +20,14 @@ RSpec.describe 'Users', type: :request do
       resp = JSON.parse(response.body)
 
       expect(resp['name']).to eq(name)
+      expect(resp['personal_website']).to eq(personal_website)
+    end
+
+    it "coerces a url without it's protocol" do
+      post '/users', params: required_params.merge(personal_website: personal_website.sub('http://', ''))
+
+      resp = JSON.parse(response.body)
+
       expect(resp['personal_website']).to eq(personal_website)
     end
 
