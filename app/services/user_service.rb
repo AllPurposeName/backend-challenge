@@ -19,7 +19,7 @@ class UserService
 
   attr_reader :expertise_generator, :name, :personal_website
 
-  def initialize(name:, personal_website:, expertise_generator: ExpertiseGenerator)
+  def initialize(name:, personal_website:, expertise_generator: Rails.application.config.expertise_generator.constantize)
     @name                = name
     @personal_website    = personal_website
     @expertise_generator = expertise_generator
