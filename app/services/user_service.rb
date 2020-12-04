@@ -17,17 +17,18 @@ class UserService
   )
   end
 
-  attr_reader :name, :personal_website
+  attr_reader :expertise_generator, :name, :personal_website
 
   def initialize(name:, personal_website:, expertise_generator: ExpertiseGenerator)
-    @name             = name
-    @personal_website = personal_website
+    @name                = name
+    @personal_website    = personal_website
+    @expertise_generator = expertise_generator
   end
 
   def self.create!(name:, personal_website:)
     raise name_not_provided_error             unless name
     raise personal_website_not_provided_error unless personal_website
-    new(name:, personal_website:).create!
+    new(name: name, personal_website: personal_website).create!
 
   end
 
