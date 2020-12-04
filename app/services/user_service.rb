@@ -20,5 +20,7 @@ class UserService
   def self.create!(name:, personal_website:)
     raise name_not_provided_error             unless name
     raise personal_website_not_provided_error unless personal_website
+
+    User.create!(name: name, personal_website: personal_website)
   end
 end
