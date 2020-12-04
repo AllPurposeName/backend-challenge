@@ -5,7 +5,13 @@ RSpec.describe "Users", type: :request do
   describe 'POST' do
     let(:name)             { 'Tarn Adams' }
     let(:personal_website) { 'www.google.com' }
-    let(:required_params)  { { name: name, personal_website: personal_website } }
+    let(:required_params)  do
+      {
+        name: name,
+        personal_website: personal_website,
+      }
+    end
+
     it 'creates a user' do
       expect do
         post '/users', params: required_params
