@@ -7,8 +7,22 @@ class ExpertiseGenerator
     http_status_code: 422
   )
   end
+  cattr_reader :invalid_personal_website_error do ApiError.build(
+    name: 'InvalidPersonalWebsiteError',
+    base: 'ScrapingError',
+    message: 'Personal website is bereft of headers',
+    code: '0102',
+    http_status_code: 422
+  )
+  end
 
-  def self.generate(*args)
+  EXPERTISE_CSS_CRITERIA = 'h1, h2, h3'.freeze
+
+  def self.generate(personal_website)
+    page               = RestClient.get(personal_website)
+    parsed_page        = Nokogiri::HTML.parse(page)
+    _expertise_headers = parsed_page.css(EXPERTISE_CSS_CRITERIA).map(&:text)
+  rescue RestClient::Exception
+    raise @@invalid_personal_website_error
   end
 end
-
