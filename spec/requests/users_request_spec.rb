@@ -71,6 +71,31 @@ RSpec.describe 'Users', type: :request do
         let(:expected_status_code) { 422 }
         it_behaves_like('errors are handled')
       end
+
+      context "when url shortener's client fails" do
+        class MockFailingUrlShortener
+          ClientFailureError = Class.new(ApiError::BasicError) do
+            define_method(:external_message) { 'The external url shortener could not be reached at this moment' }
+            define_method(:error_code)       { '0301' }
+            define_method(:http_status_code) { 424 }
+          end
+          def self.shorten(*args)
+            raise ClientFailureError
+          end
+        end
+
+        before do
+          Rails.application.config.stub(:url_shortener).and_return('MockFailingUrlShortener')
+        end
+        subject(:make_request) do
+          post '/users', params: required_params
+        end
+
+        let(:expected_message)     { 'The external url shortener could not be reached at this moment' }
+        let(:expected_error_code)  { '0301' }
+        let(:expected_status_code) { 424 }
+        it_behaves_like('errors are handled')
+      end
     end
   end
 end

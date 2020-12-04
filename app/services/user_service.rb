@@ -17,30 +17,56 @@ class UserService
   )
   end
 
-  attr_reader :expertise_generator, :name, :personal_website
+  attr_reader(
+    :expertise_generator,
+    :name,
+    :personal_website,
+    :url_shortener
+  )
+  HTTP_PROTOCOL  = 'http://'.freeze
+  HTTPS_PROTOCOL = 'https://'.freeze
 
-  def initialize(name:, personal_website:, expertise_generator: Rails.application.config.expertise_generator.constantize)
+  def initialize(
+    expertise_generator: Rails.application.config.expertise_generator.constantize,
+    name:,
+    personal_website:,
+    url_shortener: Rails.application.config.url_shortener.constantize
+  )
     @name                = name
-    @personal_website    = personal_website
+    @personal_website    = format_personal_website(personal_website)
     @expertise_generator = expertise_generator
+    @url_shortener       = url_shortener
   end
 
   def self.create!(name:, personal_website:)
     raise name_not_provided_error             unless name
     raise personal_website_not_provided_error unless personal_website
     new(name: name, personal_website: personal_website).create!
-
   end
 
   def create!
     User.create!(
       name: name,
       personal_website: personal_website,
-      expertise: expertise(personal_website)
+      expertise: expertise(personal_website),
+      shortened_website: shortened_website(personal_website)
     )
+  end
+
+  def format_personal_website(personal_website)
+    if personal_website.starts_with?(HTTP_PROTOCOL) ||
+        personal_website.starts_with?(HTTPS_PROTOCOL)
+      personal_website
+    else
+      'http://' + personal_website
+    end
   end
 
   def expertise(personal_website)
     expertise_generator.generate(personal_website)
+  end
+
+  def shortened_website(personal_website)
+    url_shortener.shorten(personal_website)
   end
 end
