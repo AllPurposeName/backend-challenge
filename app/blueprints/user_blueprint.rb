@@ -15,4 +15,9 @@ class UserBlueprint < Blueprinter::Base
     field :personal_website
     association :friends, blueprint: UserBlueprint, view: :compact
   end
+
+  view :extended do
+    include_view :normal
+    association :expert, blueprint: ExpertBlueprint
+  end
 end
