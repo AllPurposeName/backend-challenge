@@ -26,7 +26,21 @@ class UsersController < ApplicationController
     render json: ErrorBlueprint.render(error), status: error.http_status_code
   end
 
+  def find_experts
+    user = User.find_by(id: strong_find_experts_params[:id])
+
+    expert = ExpertFinderService.find_expert(desired_expertise: strong_find_experts_params[:expertise], user: user)
+
+    render json: UserBlueprint.render(user, options: expert, view: :extended), status: 200
+  rescue ApiError::BasicError => error
+    render json: ErrorBlueprint.render(error), status: error.http_status_code
+  end
+
   def strong_params
     params.permit(:name, :personal_website)
+  end
+
+  def strong_find_experts_params
+    params.permit(:id, :expertise)
   end
 end

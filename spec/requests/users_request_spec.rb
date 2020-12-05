@@ -106,4 +106,36 @@ RSpec.describe 'Users', type: :request do
       end
     end
   end
+
+  describe '#find_experts' do
+    let!(:user)     { User.create!(name: 'Tarn', expertise: []) }
+    let(:id)        { user.id }
+    let(:expertise) { 'DWARVES' }
+    let(:required_params) do
+      {
+        id: id,
+        expertise: expertise,
+      }
+    end
+    context 'when no user in the system is an expert on something' do
+      subject(:make_request) do
+        get '/find_experts', params: required_params
+      end
+
+      let(:expected_message)     { 'No stranger has the expertise queried against' }
+      let(:expected_error_code)  { '0401' }
+      let(:expected_status_code) { 404 }
+      it_behaves_like('errors are handled')
+    end
+    context 'when no user is supplied' do
+      subject(:make_request) do
+        get '/find_experts', params: required_params.except(:id)
+      end
+
+      let(:expected_message)     { 'No user supplied' }
+      let(:expected_error_code)  { '0402' }
+      let(:expected_status_code) { 422 }
+      it_behaves_like('errors are handled')
+    end
+  end
 end
