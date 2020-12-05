@@ -27,6 +27,7 @@ gem 'bootsnap', '>= 1.4.2', require: false
 gem 'pry-rails'
 gem 'blueprinter'
 gem 'rest-client'
+gem 'rebrandly'
 
 group :development do
   gem 'listen', '~> 3.2'

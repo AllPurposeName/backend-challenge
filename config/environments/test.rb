@@ -46,5 +46,7 @@ Rails.application.configure do
 
   # Raises error for missing translations.
   # config.action_view.raise_on_missing_translations = true
-  config.expertise_generator = 'MockExpertiseGenerator'
+  config.expertise_generator  = 'MockExpertiseGenerator'
+  config.url_shortener        = 'MockUrlShortener'
+  config.url_shortener_client = 'MockRebrandlyApi'
 end

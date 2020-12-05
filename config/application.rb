@@ -41,5 +41,9 @@ module BackendChallenge
         helper_specs: false,
         routing_specs: false
     end
+
+    Rebrandly.configure do |config|
+      config.api_key = Rails.application.credentials.clients[:rebrandly_api_key]
+    end
   end
 end
