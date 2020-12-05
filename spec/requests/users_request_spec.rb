@@ -46,6 +46,31 @@ RSpec.describe 'Users', type: :request do
         let(:expected_status_code) { 422 }
         it_behaves_like('errors are handled')
       end
+
+      context 'when no valid headers are found' do
+        class MockFailingExpertiseGenerator
+          PersonalWebsiteMissingHeadersError = Class.new(ApiError::BasicError) do
+            define_method(:external_message) { 'Personal website is bereft of headers' }
+            define_method(:error_code)       { '0101' }
+            define_method(:http_status_code) { 422 }
+          end
+          def self.generate(*args)
+            raise PersonalWebsiteMissingHeadersError
+          end
+        end
+
+        before do
+          Rails.application.config.stub(:expertise_generator).and_return('MockFailingExpertiseGenerator')
+        end
+        subject(:make_request) do
+          post '/users', params: required_params
+        end
+
+        let(:expected_message)     { 'Personal website is bereft of headers' }
+        let(:expected_error_code)  { '0101' }
+        let(:expected_status_code) { 422 }
+        it_behaves_like('errors are handled')
+      end
     end
   end
 end
